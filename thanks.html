@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ELMNTS · reservation</title><meta name="description" content="Your ELMNTS reservation.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="styles.css"><script src="config.js"></script><script>
+(function(){
+  var C = window.ELMNTS_CONFIG || {};
+  // Meta Pixel (standard snippet), only when an ID is configured
+  if (C.META_PIXEL_ID) {
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', C.META_PIXEL_ID); fbq('track', 'PageView');
+  }
+  window.track = function(ev, data){ try { if (window.fbq) fbq('track', ev, data || {}); } catch(e){} };
+  // keep UTM parameters for attribution of the lead
+  try {
+    var q = new URLSearchParams(location.search), utm = {};
+    ['utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(function(k){ if (q.get(k)) utm[k] = q.get(k); });
+    if (Object.keys(utm).length) sessionStorage.setItem('elmnts_utm', JSON.stringify(utm));
+  } catch(e){}
+  window.getUTM = function(){ try { return JSON.parse(sessionStorage.getItem('elmnts_utm') || '{}'); } catch(e){ return {}; } };
+  window.sbInsert = async function(table, row){
+    if (!C.SUPABASE_URL || !C.SUPABASE_KEY) return { ok:false, reason:'no-backend' };
+    var r = await fetch(C.SUPABASE_URL + '/rest/v1/' + table, {
+      method:'POST',
+      headers:{ 'apikey': C.SUPABASE_KEY, 'Authorization': 'Bearer ' + C.SUPABASE_KEY, 'Content-Type':'application/json', 'Prefer':'return=minimal' },
+      body: JSON.stringify(row)
+    });
+    return { ok: r.ok, status: r.status };
+  };
+  window.uuid = function(){ if (crypto && crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c=='x'?r:(r&0x3|0x8);return v.toString(16);}); };
+  window.codeFrom = function(id){ return 'ELM-' + id.replace(/-/g,'').slice(0,6).toUpperCase(); };
+  // fill contact placeholders
+  document.addEventListener('DOMContentLoaded', function(){
+    document.querySelectorAll('[data-wa]').forEach(function(a){ a.href = 'https://wa.me/' + (C.WHATSAPP||''); });
+    document.querySelectorAll('[data-email]').forEach(function(a){ a.href = 'mailto:' + (C.EMAIL||''); a.textContent = C.EMAIL || ''; });
+    document.querySelectorAll('[data-ship]').forEach(function(el){ el.textContent = C.SHIP_WINDOW || ''; });
+  });
+})();
+</script>
+</head><body>
+<header class="top"><div class="wrap"><a class="wordmark" href="index.html">ELMNTS</a><nav><a href="index.html#how">How it works</a><a href="index.html#specs">Specs</a><a href="index.html#faq">FAQ</a><a class="cta" href="index.html#reserve">Reserve · AED 100</a></nav></div></header>
+
+<main><section class="hero"><div class="wrap"><div class="grid">
+  <div>
+    <div class="eyebrow">Reservation</div>
+    <h1 id="headline" style="margin-top:14px">Deposit received. You are in.</h1>
+    <p class="lede" id="sub"></p>
+    <div class="eyebrow" style="margin-top:18px">Your code</div><div class="code" id="code">—</div>
+    <p><a class="btn" id="pay-again" href="#" hidden>Pay the AED 100 deposit</a></p>
+    <p class="fine">Keep the code. Quote it on WhatsApp for anything about your reservation, including a refund.</p>
+  </div>
+  <div class="card">
+    <h3>Four quick questions, 30 seconds</h3>
+    <p class="fine">This decides what we build first.</p>
+    <form id="survey" novalidate>
+      <div class="field"><span>Which would you rather have?</span></div>
+      <div class="concept-pick">
+        <label><input type="radio" name="concept" value="A"><div class="mock"><svg class="mk" viewBox="-6 -6 912 1017" xmlns="http://www.w3.org/2000/svg" role="img"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,1.5 L9,5 L0,8.5 z" class="arr"/></marker><pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" class="hl"/></pattern><pattern id="hatchb" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(-45)"><line x1="0" y1="0" x2="0" y2="5" class="hl2"/></pattern><linearGradient id="gShell" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D8CCB3"/><stop offset="1" stop-color="#BFB096"/></linearGradient><linearGradient id="gShellD" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C4B59A"/><stop offset="1" stop-color="#A89A80"/></linearGradient><linearGradient id="gFelt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E8E2D5"/><stop offset="1" stop-color="#D9D2C2"/></linearGradient><linearGradient id="gDark" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3A3B40"/><stop offset="1" stop-color="#22232A"/></linearGradient><filter id="grain" x="-2%" y="-2%" width="104%" height="104%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="3" seed="11" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0.55  0 0 0 0 0.55  0 0 0 0 0.5  0 0 0 0.42 0" result="g"/><feComposite in="g" in2="SourceGraphic" operator="in" result="gc"/><feBlend in="SourceGraphic" in2="gc" mode="multiply"/></filter><filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#000" flood-opacity="0.22"/></filter><filter id="shadowS" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#000" flood-opacity="0.25"/></filter></defs><rect x="201.02" y="157.41" width="25.48" height="59.46" rx="12.74" fill="#8E8470"/><rect x="588.56" y="157.41" width="25.48" height="59.46" rx="12.74" fill="#8E8470"/><path d="M301.36,225.36 L301.36,178.64 A106.17,106.17 0 0 1 513.7,178.64 L513.7,225.36" fill="none" style="stroke:#B5A68B;stroke-width:53.1"/><g filter="url(#shadow)"><rect x="20.0" y="199.88" width="775.06" height="711.36" rx="29.73" fill="url(#gShell)" filter="url(#grain)"/></g><rect x="28.49" y="208.37" width="758.07" height="694.37" rx="21.23" class="mstitch"/><text x="751.9" y="868.1" class="mdeboss" style="font-size:23.4px" fill="#E6DCC8" text-anchor="end">ELMNTS</text><text x="753.3" y="869.5" class="mdeboss" style="font-size:23.4px" fill="#8F8269" text-anchor="end">ELMNTS</text><text x="752.6" y="868.8" class="mdeboss" style="font-size:23.4px" fill="#B3A489" text-anchor="end">ELMNTS</text></svg></div><div class="t">Spine</div><div class="d">Thinner, book-like, rail between laptop and mouse</div></label>
+        <label><input type="radio" name="concept" value="B"><div class="mock"><svg class="mk" viewBox="-6 -6 912 1017" xmlns="http://www.w3.org/2000/svg" role="img"><defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,1.5 L9,5 L0,8.5 z" class="arr"/></marker><pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" class="hl"/></pattern><pattern id="hatchb" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(-45)"><line x1="0" y1="0" x2="0" y2="5" class="hl2"/></pattern><linearGradient id="gShell" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D8CCB3"/><stop offset="1" stop-color="#BFB096"/></linearGradient><linearGradient id="gShellD" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C4B59A"/><stop offset="1" stop-color="#A89A80"/></linearGradient><linearGradient id="gFelt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E8E2D5"/><stop offset="1" stop-color="#D9D2C2"/></linearGradient><linearGradient id="gDark" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3A3B40"/><stop offset="1" stop-color="#22232A"/></linearGradient><filter id="grain" x="-2%" y="-2%" width="104%" height="104%"><feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="3" seed="11" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 0.55  0 0 0 0 0.55  0 0 0 0 0.5  0 0 0 0.42 0" result="g"/><feComposite in="g" in2="SourceGraphic" operator="in" result="gc"/><feBlend in="SourceGraphic" in2="gc" mode="multiply"/></filter><filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#000" flood-opacity="0.22"/></filter><filter id="shadowS" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#000" flood-opacity="0.25"/></filter></defs><rect x="201.02" y="157.41" width="25.48" height="59.46" rx="12.74" fill="#8E8470"/><rect x="588.56" y="157.41" width="25.48" height="59.46" rx="12.74" fill="#8E8470"/><path d="M333.21,225.36 L333.21,114.94 A74.32,74.32 0 0 1 481.85,114.94 L481.85,225.36" fill="none" style="stroke:#8E8470;stroke-width:53.1"/><g filter="url(#shadow)"><rect x="20.0" y="199.88" width="775.06" height="711.36" rx="29.73" fill="url(#gShell)" filter="url(#grain)"/></g><rect x="330.02" y="199.88" width="465.04" height="711.36" rx="29.73" fill="url(#gShellD)" filter="url(#grain)"/><rect x="330.02" y="199.88" width="6.37" height="711.36" fill="#000" opacity="0.10"/><line x1="330.02" y1="204.12" x2="330.02" y2="906.99" stroke="#7E7260" stroke-width="0.8"/><rect x="338.52" y="208.37" width="448.05" height="694.37" rx="21.23" class="mstitch"/><path d="M28.49,229.6 L28.49,881.51 M49.73,208.37 L325.78,208.37 M49.73,902.74 L325.78,902.74" class="mstitch"/><text x="751.9" y="868.1" class="mdeboss" style="font-size:23.4px" fill="#E6DCC8" text-anchor="end">ELMNTS</text><text x="753.3" y="869.5" class="mdeboss" style="font-size:23.4px" fill="#8F8269" text-anchor="end">ELMNTS</text><text x="752.6" y="868.8" class="mdeboss" style="font-size:23.4px" fill="#B3A489" text-anchor="end">ELMNTS</text></svg></div><div class="t">Wrap</div><div class="d">Wings fold over a full felt sleeve, most protective</div></label>
+      </div>
+      <label class="field"><span>Your laptop</span><input name="laptop" placeholder="e.g. MacBook Pro 14, Dell XPS 15"></label>
+      <label class="field"><span>Where do you work most days?</span><select name="workplace"><option value="">Choose</option><option>Office desk</option><option>Cafés</option><option>Co-working space</option><option>Client sites</option><option>Home</option><option>Mix of all</option></select></label>
+      <label class="field"><span>What nearly stopped you reserving?</span><textarea name="hesitation" rows="3" placeholder="Price, the wait, not sure about the material…"></textarea></label>
+      <button class="btn" type="submit" style="width:100%">Send</button>
+    </form>
+    <p id="survey-done" hidden>Thank you. That helps more than you know.</p>
+  </div>
+</div></div></section></main>
+<footer><div class="wrap"><div>© 2026 ELMNTS · a pre-launch project from Dubai · <a data-email href="#"></a> · <a data-wa href="#">WhatsApp</a></div><div>Your details are used only to manage your reservation. Deposits are refundable in full at any time before shipping.</div></div></footer>
+<script>
+(function(){
+  var C = window.ELMNTS_CONFIG || {};
+  var q = new URLSearchParams(location.search), paid = q.get('paid') === '1';
+  var res = {}; try { res = JSON.parse(sessionStorage.getItem('elmnts_res') || '{}'); } catch(e){}
+  var code = res.code || q.get('client_reference_id') || '';
+  document.getElementById('code').textContent = code || '—';
+  document.getElementById('headline').textContent = paid ? 'Deposit received. You are in.' : (C.PAYMENT_URL ? 'Almost there.' : 'Reservation noted.');
+  document.getElementById('sub').textContent = paid
+    ? 'Your AED ' + (C.DEPOSIT||100) + ' deposit is refundable any time, no questions asked. We will send progress updates about once a month.'
+    : (C.PAYMENT_URL ? 'If you did not complete the AED ' + (C.DEPOSIT||100) + ' deposit, use the button below. Your spot is held for 48 hours.'
+                     : 'We will send you the deposit link on WhatsApp. Reply to it to hold your spot.');
+  var pay = document.getElementById('pay-again');
+  if (!paid && C.PAYMENT_URL) { pay.hidden = false; pay.href = C.PAYMENT_URL; } else { pay.hidden = true; }
+  if (paid) track('Purchase', {value:C.DEPOSIT||100, currency:'AED', content_name:'ELMNTS deposit', content_type:'product'});
+  var f = document.getElementById('survey'), done = document.getElementById('survey-done');
+  f.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var row = { reservation_id: res.id || null, reservation_code: code || null, paid: paid,
+      concept_pref: (f.querySelector('input[name=concept]:checked')||{}).value || null,
+      laptop: f.laptop.value || null, workplace: f.workplace.value || null, hesitation: f.hesitation.value.trim() || null };
+    f.querySelector('button').disabled = true;
+    await sbInsert('survey', row);
+    f.hidden = true; done.hidden = false;
+  });
+})();
+</script>
+</body></html>
